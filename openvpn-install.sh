@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# https://github.com/Nyr/openvpn-install
+# 
 #
-# Copyright (c) 2013 Nyr. Released under the MIT License.
+# Copyright (c) 2021 COOCKIE.PRO
 
 
 # Detect Debian users running the script with "sh" instead of bash
