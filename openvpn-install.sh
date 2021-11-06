@@ -29,7 +29,7 @@ elif [[ -e /etc/centos-release || -e /etc/redhat-release ]]; then
 	OS=centos
 	GROUPNAME=nobody
 else
-	echo "Looks like you aren't running this installer on Debian, Ubuntu or CentOS"
+	echo "Этот установщик сделал админ COOCKIE.PRO, работает на  Debian, Ubuntu или CentOS"
 	exit
 fi
 
