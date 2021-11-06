@@ -62,7 +62,7 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 		echo "   2) Удалить уже существующий конфиг"
 		echo "   3) Удалить OVPN"
 		echo "   4) Выйти"
-		read -p "Select an option [1-4]: " option
+		read -p "Выберите вариант [1-4]: " option
 		case $option in
 			1) 
 			echo
