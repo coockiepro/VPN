@@ -54,26 +54,26 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 	while :
 	do
 	clear
-		echo "Looks like OpenVPN is already installed."
+		echo "У Вас уже есть конфиг, но Вы можете:"
 		echo
-		echo "What do you want to do?"
-		echo "   1) Add a new user"
-		echo "   2) Revoke an existing user"
-		echo "   3) Remove OpenVPN"
-		echo "   4) Exit"
+		echo 
+		echo "   1) Добавить новый конфиг"
+		echo "   2) Удалить уже существующий конфиг"
+		echo "   3) Удалить OVPN"
+		echo "   4) Выйти"
 		read -p "Select an option [1-4]: " option
 		case $option in
 			1) 
 			echo
-			echo "Tell me a name for the client certificate."
-			echo "Please, use one word only, no special characters."
-			read -p "Client name: " -e CLIENT
+			echo "Напишите название вашего нового конфига."
+			echo "Используйте только слова, без левых символов."
+			read -p "Имя конфига: " -e CLIENT
 			cd /etc/openvpn/easy-rsa/
 			EASYRSA_CERT_EXPIRE=3650 ./easyrsa build-client-full $CLIENT nopass
 			# Generates the custom client.ovpn
 			newclient "$CLIENT"
 			echo
-			echo "Client $CLIENT added, configuration is available at:" ~/"$CLIENT.ovpn"
+			echo "Конфиг $CLIENT добавлен и доступен для скачивания в :" ~/"$CLIENT.ovpn"
 			exit
 			;;
 			2)
@@ -82,11 +82,11 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 			NUMBEROFCLIENTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c "^V")
 			if [[ "$NUMBEROFCLIENTS" = '0' ]]; then
 				echo
-				echo "You have no existing clients!"
+				echo "У Вас пока нет конфигов!"
 				exit
 			fi
 			echo
-			echo "Select the existing client certificate you want to revoke:"
+			echo "Имя конфига который вы хотите удалить:"
 			tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | nl -s ') '
 			if [[ "$NUMBEROFCLIENTS" = '1' ]]; then
 				read -p "Select one client [1]: " CLIENTNUMBER
@@ -95,7 +95,7 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 			fi
 			CLIENT=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep "^V" | cut -d '=' -f 2 | sed -n "$CLIENTNUMBER"p)
 			echo
-			read -p "Do you really want to revoke access for client $CLIENT? [y/N]: " -e REVOKE
+			read -p "Вы реально хотите удалить ваш конфиг $CLIENT? [y/N]: " -e REVOKE
 			if [[ "$REVOKE" = 'y' || "$REVOKE" = 'Y' ]]; then
 				cd /etc/openvpn/easy-rsa/
 				./easyrsa --batch revoke $CLIENT
@@ -108,16 +108,16 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 				# CRL is read with each client connection, when OpenVPN is dropped to nobody
 				chown nobody:$GROUPNAME /etc/openvpn/crl.pem
 				echo
-				echo "Certificate for client $CLIENT revoked!"
+				echo "Конфиг $CLIENT удален!"
 			else
 				echo
-				echo "Certificate revocation for client $CLIENT aborted!"
+				echo "Удаление конфига $CLIENT прервано!"
 			fi
 			exit
 			;;
 			3) 
 			echo
-			read -p "Do you really want to remove OpenVPN? [y/N]: " -e REMOVE
+			read -p "Вы реально хотите удалить сам сервер OVPN? [y/N]: " -e REMOVE
 			if [[ "$REMOVE" = 'y' || "$REMOVE" = 'Y' ]]; then
 				PORT=$(grep '^port ' /etc/openvpn/server.conf | cut -d " " -f 2)
 				PROTOCOL=$(grep '^proto ' /etc/openvpn/server.conf | cut -d " " -f 2)
@@ -145,10 +145,10 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 				rm -rf /etc/openvpn
 				rm -f /etc/sysctl.d/30-openvpn-forward.conf
 				echo
-				echo "OpenVPN removed!"
+				echo "OpenVPN Удален"
 			else
 				echo
-				echo "Removal aborted!"
+				echo "Удаление прервано!"
 			fi
 			exit
 			;;
@@ -160,10 +160,10 @@ else
 	echo 'Вас приветствует установщик OpenVPN от команды "COOCKIE.PRO"!'
 	echo
 	# OpenVPN setup and first user creation
-	echo "I need to ask you a few questions before starting the setup."
-	echo "You can leave the default options and just press enter if you are ok with them."
+	echo "Вы должны следовать инструкции."
+	echo "Если вы не хотите ничего менять - просто нажимайте постоянно Enter"
 	echo
-	echo "First, provide the IPv4 address of the network interface you want OpenVPN"
+	echo "Сначала выберите IP сервера(советуем оставить как есть)"
 	echo "listening to."
 	# Autodetect IP address and pre-fill for the user
 	IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
@@ -175,8 +175,8 @@ else
 		read -p "Public IP address / hostname: " -e PUBLICIP
 	fi
 	echo
-	echo "Which protocol do you want for OpenVPN connections? / Какой тип подключения выбрать?"
-	echo "   1) UDP (recommended)"
+	echo "Какой тип подключения вы желаете выбрать?"
+	echo "   1) UDP (рекомендуем)"
 	echo "   2) TCP"
 	read -p "Protocol [1-2]: " -e -i 1 PROTOCOL
 	case $PROTOCOL in
@@ -188,10 +188,10 @@ else
 		;;
 	esac
 	echo
-	echo "What port do you want OpenVPN listening to? / Введите порт!"
-	read -p "Port: " -e -i 1194 PORT
+	echo "Какой порт должен использоваться в вашем конфиге? "
+	read -p "Port: " -e -i 4441 PORT
 	echo
-	echo "Which DNS do you want to use with the VPN? / Какой ДНС вы хотите установить?"
+	echo "Какой ДНС вы хотите установить?(советуем первый вариант, так ваш конфиг будет более чистым"
 	echo "   1) Current system resolvers"
 	echo "   2) 1.1.1.1"
 	echo "   3) Google"
@@ -199,12 +199,12 @@ else
 	echo "   5) Verisign"
 	read -p "DNS [1-5]: " -e -i 1 DNS
 	echo
-	echo "Finally, tell me your name for the client certificate. / Название вашего конфига?"
-	echo "Please, use one word only, no special characters."
-	read -p "Client name: " -e -i coockie.pro CLIENT
+	echo "Какое имя будет у Вашего конфига?"
+	echo "Используйте только буквы, без символов."
+	read -p "Client name: " -e -i COOCKIE.PRO CLIENT
 	echo
-	echo "Okay, that was all I needed. We are ready to set up your OpenVPN server now."
-	read -n1 -r -p "Press any key to continue..."
+	echo "Окей друг, это конец настройки и помни COOCKIE.PRO - топ ребята."
+	read -n1 -r -p "Нажми любую клавишу чтобы конфиг появился на сервере."
 	if [[ "$OS" = 'debian' ]]; then
 		apt-get update
 		apt-get install openvpn iptables openssl ca-certificates -y
@@ -372,9 +372,10 @@ verb 3" > /etc/openvpn/client-common.txt
 	# Generates the custom client.ovpn
 	newclient "$CLIENT"
 	echo
-	echo "Finished!"
+	echo "ГОТОВО!!!"
 	echo
-	echo "Ваш конфиг доступен по адресу. / Your client configuration is available at:" ~/"$CLIENT.ovpn"
-	echo "If you want to add more clients, you simply need to run this script again!"
+	echo "Ваш конфиг доступен по адресу:" ~/"$CLIENT.ovpn"
+	echo "Осталось только скачать и импортировать конфиг в Ваш OVPN клиент."
+	echo "Если нужно создать еще 1 конфиг, удалить или изменить старый, просто запустите этот скрипт еще раз!"
         echo "Форум COOCKIE.PRO желает успешной и анонимной работы!"
 fi
