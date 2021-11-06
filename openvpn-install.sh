@@ -204,7 +204,7 @@ else
 	read -p "Client name: " -e -i COOCKIE.PRO CLIENT
 	echo
 	echo "Окей друг, это конец настройки! Помни COOCKIE.PRO - Профессионалы по работе с логами!"
-	read -n1 -r -p "Нажми любую клавишу чтобы конфиг появился на сервере."
+	read -n1 -r -p "Нажми любую клавишу, чтобы конфиг появился на сервере."
 	if [[ "$OS" = 'debian' ]]; then
 		apt-get update
 		apt-get install openvpn iptables openssl ca-certificates -y
