@@ -54,8 +54,8 @@ if [[ -e /etc/openvpn/server.conf ]]; then
 	while :
 	do
 	clear
-		echo "Форум COOCKIE.PRO приветстует Вас!"
-		echo "У Вас уже есть конфиг, но Вы можете:"
+		echo "Форум COOCKIE.PRO Приветствует Вас! У Вас уже есть конфиг, но Вы можете:"
+		echo 
 		echo 
 		echo "   1) Добавить новый конфиг"
 		echo "   2) Удалить уже существующий конфиг"
