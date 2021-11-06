@@ -164,7 +164,7 @@ else
 	echo "Если вы не хотите ничего менять - просто нажимайте постоянно Enter"
 	echo
 	echo "Сначала выберите IP сервера(советуем оставить как есть)"
-	echo "listening to."
+	echo "Список IP на данном сервере:"
 	# Autodetect IP address and pre-fill for the user
 	IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
 	read -p "IP address: " -e -i $IP IP
